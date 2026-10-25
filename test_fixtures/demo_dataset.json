@@ -1,0 +1,123 @@
+{
+  "version": "1.0.0",
+  "generated_at": "2026-10-25T18:00:00Z",
+  "organization": {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "name": "Demo Multi-Cloud Enterprise",
+    "slug": "demo-enterprise"
+  },
+  "connections": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "provider": "aws",
+      "name": "Production AWS Account (us-east-1)",
+      "status": "active",
+      "metadata": {
+        "role_arn": "arn:aws:iam::123456789012:role/CloudSecSecurityAuditRole",
+        "account_id": "123456789012",
+        "external_id": "ext-id-demo-synthetic-external-id-12345"
+      }
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "provider": "azure",
+      "name": "Corporate Azure Subscription (eastus)",
+      "status": "active",
+      "metadata": {
+        "subscription_id": "sub-12345678-0000-0000-0000-000000000001",
+        "client_id": "app-client-id-0000-0000-000000000001"
+      }
+    },
+    {
+      "id": "33333333-3333-3333-3333-333333333333",
+      "provider": "gcp",
+      "name": "Analytics GCP Project (us-central1)",
+      "status": "active",
+      "metadata": {
+        "project_id": "demo-gcp-analytics-prod",
+        "service_account_email": "cloudsec-scanner@demo-gcp-analytics-prod.iam.gserviceaccount.com"
+      }
+    }
+  ],
+  "resources": [
+    {
+      "id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "provider": "aws",
+      "provider_native_id": "arn:aws:s3:::demo-public-data-lake",
+      "resource_type": "aws_s3_bucket",
+      "name": "demo-public-data-lake",
+      "region": "us-east-1",
+      "configuration": {
+        "block_public_acls": true,
+        "ignore_public_acls": false,
+        "block_public_policy": false,
+        "restrict_public_buckets": false
+      }
+    },
+    {
+      "id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "provider": "azure",
+      "provider_native_id": "/subscriptions/sub-1/resourceGroups/rg-demo/providers/Microsoft.Storage/storageAccounts/demostorageacct",
+      "resource_type": "storage_account",
+      "name": "demostorageacct",
+      "region": "eastus",
+      "configuration": {
+        "allow_blob_public_access": true,
+        "supports_https_traffic_only": true
+      }
+    },
+    {
+      "id": "cccccccc-cccc-cccc-cccc-cccccccccccc",
+      "provider": "gcp",
+      "provider_native_id": "projects/demo-gcp-analytics-prod/instances/demo-postgres-db",
+      "resource_type": "sql_instance",
+      "name": "demo-postgres-db",
+      "region": "us-central1",
+      "configuration": {
+        "ipv4_enabled": true,
+        "authorized_networks": ["0.0.0.0/0"],
+        "require_ssl": false
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "dddddddd-dddd-dddd-dddd-dddddddddddd",
+      "check_id": "aws-s3-block-public-access",
+      "resource_id": "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+      "severity": "critical",
+      "status": "open",
+      "fingerprint": "fp-aws-s3-public-block-demo-12345"
+    },
+    {
+      "id": "eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee",
+      "check_id": "azure-storage-public-access",
+      "resource_id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+      "severity": "high",
+      "status": "open",
+      "fingerprint": "fp-azure-storage-public-access-demo-12345"
+    },
+    {
+      "id": "ffffffff-ffff-ffff-ffff-ffffffffffff",
+      "check_id": "gcp-sql-no-public-ip",
+      "resource_id": "cccccccc-cccc-cccc-cccc-cccccccccccc",
+      "severity": "critical",
+      "status": "open",
+      "fingerprint": "fp-gcp-sql-public-ip-demo-12345"
+    }
+  ],
+  "billing_sample": [
+    {
+      "provider": "aws",
+      "account_id": "123456789012",
+      "resource_id": "i-demo-ec2-instance-123",
+      "service": "AmazonEC2",
+      "region": "us-east-1",
+      "currency": "USD",
+      "amount_usd": 350.0,
+      "period_start": "2026-10-01",
+      "period_end": "2026-10-31"
+    }
+  ]
+}
+

@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: cloudsec
+          POSTGRES_PASSWORD: cloudsec_dev
+          POSTGRES_USER: cloudsec
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cloudsec -d cloudsec"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+    env:
+      DATABASE_URL: postgres://cloudsec:cloudsec_dev@127.0.0.1:5432/cloudsec
+    steps:
+      - uses: actions/checkout@v4
+      - run: rustup toolchain install 1.88.0 --profile minimal --component clippy,rustfmt
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test --workspace
+      - run: cargo run -p cloudsec-api --bin migrate
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.12.0
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm --prefix web ci
+      - run: npm --prefix web run lint
+      - run: npm --prefix web test
+      - run: npm --prefix web run build
+      - run: npm --prefix web audit --audit-level=high
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: rustsec/audit-check@v2.0.0
+      - uses: gitleaks/gitleaks-action@v2
+
